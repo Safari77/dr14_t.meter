@@ -149,11 +149,6 @@ def parse_args():
                         dest="quiet",
                         help="Quiet mode")
 
-    parser.add_argument("--skip_version_check",
-                        action="store_true",
-                        dest="skip_version_check",
-                        help="Do not check for new versions")
-
     parser.add_argument("-v", "--version",
                         action="store_true",
                         dest="version",

@@ -76,7 +76,9 @@ class AudioFileReader:
             return ""
 
     def read_audio_file_new(self, file_name, target):
-
+        # Direct WAV reading without using ffmpeg conversion for better
+        # performance; that is also why different bit depths need to be
+        # handled.
         time_a = time.time()
 
         full_command = self.__cmd
@@ -85,8 +87,8 @@ class AudioFileReader:
         tmp_dir = tempfile.gettempdir()
         tmp_file = os.path.join(tmp_dir, file) + ".wav"
 
-        file_name = re.sub("(\"|`|\$)", r"\\\1", file_name)
-        tmp_file = re.sub("(\"|`|\$)", r"_xyz_", tmp_file)
+        file_name = re.sub(r"(\"|`|\$)", r"\\\1", file_name)
+        tmp_file = re.sub(r"(\"|`|\$)", r"_xyz_", tmp_file)
 
         full_command = full_command + " " + \
             self.get_cmd_options(file_name, tmp_file)
@@ -118,6 +120,7 @@ class AudioFileReader:
 
         convert_8_bit = numpy.float32(2**8 + 1.0)
         convert_16_bit = numpy.float32(2**15 + 1.0)
+        convert_24_bit = numpy.float32(2**23 + 1.0)
         convert_32_bit = numpy.float32(2**31 + 1.0)
 
         try:
@@ -130,20 +133,43 @@ class AudioFileReader:
             #print_msg( file_name + "!!!!!!!!!!!!: " + str(target.channels) + " " + str(target.sample_width ) + " " + str( target.Fs ) + " " + str( nframes ) )
 
             X = wave_read.readframes(wave_read.getnframes())
-
             sample_type = "int%d" % (target.sample_width * 8)
 
-            target.Y = numpy.fromstring(X, dtype=sample_type).reshape(
-                nframes, target.channels)
+            if target.sample_width == 3:  # 24-bit
+                # Read as uint8 and reshape to 3-byte groups
+                data = numpy.frombuffer(X, dtype=numpy.uint8).reshape(-1, 3)
+
+                # Properly combine bytes maintaining sign
+                # Note: assuming little-endian
+                target.Y = numpy.zeros((len(data), 1), dtype=numpy.int32)
+
+                # Combine bytes with proper sign handling
+                target.Y.reshape(-1)[0::1] = (
+                    (data[:, 0].astype(numpy.int32) << 0) |
+                    (data[:, 1].astype(numpy.int32) << 8) |
+                    ((data[:, 2].astype(numpy.int32) << 16) & 0xFF0000) |
+                    # Sign extension
+                    ((data[:, 2] & 0x80).astype(numpy.int32) << 24) >> 8
+                )
+
+                target.Y = target.Y.reshape(nframes, target.channels)
+                # Normalize to [-1.0, 1.0] range
+                target.Y = target.Y.astype(numpy.float32) / convert_24_bit
+
+            else:
+                target.Y = numpy.frombuffer(X, dtype=sample_type).reshape(
+                    nframes, target.channels)
+
+                if sample_type == 'int16':
+                    target.Y = target.Y.astype(numpy.float32) / convert_16_bit
+                elif sample_type == 'int32':
+                    target.Y = target.Y.astype(numpy.float32) / convert_32_bit
+                elif sample_type == 'int8':
+                    target.Y = target.Y.astype(numpy.float32) / convert_8_bit
+                else:
+                    raise ValueError(f"Unsupported sample type: {sample_type}")
 
             wave_read.close()
-
-            if sample_type == 'int16':
-                target.Y = target.Y / (convert_16_bit)
-            elif sample_type == 'int32':
-                target.Y = target.Y / (convert_32_bit)
-            else:
-                target.Y = target.Y / (convert_8_bit)
 
             #print_msg( "target.Y: " + str(target.Y.dtype) )
         except:
@@ -159,8 +185,7 @@ class AudioFileReader:
         return True
 
     def get_generic_ffmpeg_options(self, file_name, tmp_file):
-        return " -i \"%s\" -b:a 16 -ar 44100 -y \"%s\" -loglevel quiet " % (file_name, tmp_file)
-
+        return " -i \"%s\" -af aresample=resampler=soxr:precision=28:osr=44100:output_sample_bits=16:osf=s16 -acodec pcm_s16le -y \"%s\" -loglevel quiet " % (file_name, tmp_file)
 
 class Mp3FileReader(AudioFileReader):
 
