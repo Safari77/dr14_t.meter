@@ -277,7 +277,7 @@ class RetirveMetadata:
 
         buf = StringIO(format_tags)
         config = ConfigParser.ConfigParser()
-        config.readfp(buf)
+        config.read_file(buf)
 
         try:
             track['title'] = config.get("format.tags", "title")
