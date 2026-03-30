@@ -33,9 +33,11 @@ import subprocess
 import sys
 import logging
 import numpy
-
+import multiprocessing
 
 def main():
+    if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
+        multiprocessing.set_start_method('fork', force=True)
 
     options = parse_args()
 
