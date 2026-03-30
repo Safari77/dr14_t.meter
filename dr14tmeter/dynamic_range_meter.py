@@ -16,6 +16,7 @@
 
 import os
 import sys
+import queue
 import codecs
 import multiprocessing as mp
 
@@ -166,14 +167,10 @@ class DynamicRangeMeter:
         return True
 
     def scan_mp(self, dir_name="", thread_cnt=2, files_list=[]):
-
-        if sys.version_info[0] == 2:
-            dir_name = dir_name.decode('utf-8')
-
         self.dr14 = 0
 
-        job_queue_sh = mp.JoinableQueue(2000)
-        res_queue_sh = mp.Queue(2000)
+        job_queue_sh = mp.JoinableQueue()
+        res_queue_sh = mp.Queue()
 
         if files_list == []:
             if not os.path.isdir(dir_name):
@@ -251,11 +248,11 @@ class DynamicRangeMeter:
         #print_msg("start .... ")
 
         while True:
-
-            if job_queue_sh.empty():
+            try:
+                # wait up to 1 second for a job, then gracefully exit
+                job = job_queue_sh.get(timeout=1.0) 
+            except queue.Empty:
                 return
-
-            job = job_queue_sh.get()
 
             full_file = os.path.join(job.dir_name, job.file_name)
             #print ( full_file )
