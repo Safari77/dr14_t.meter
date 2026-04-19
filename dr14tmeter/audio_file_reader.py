@@ -27,18 +27,17 @@ import numpy
 from dr14tmeter.out_messages import print_msg, dr14_log_info
 from dr14tmeter.dr14_global import get_ffmpeg_cmd
 
-#from _ftdi1 import NONE
+# from _ftdi1 import NONE
 
 # ffmpeg -i example.m4a -f wav pipe:1 > test.wav
 
 
 class AudioFileReader:
-
     def __init__(self):
 
         self.__ffmpeg_cmd = get_ffmpeg_cmd()
 
-        if sys.platform.startswith('win'):
+        if sys.platform.startswith("win"):
             self.__cmd = ".\\decoder\\%s " % self.get_cmd()
         else:
             self.__cmd = "%s " % self.get_cmd()
@@ -60,14 +59,14 @@ class AudioFileReader:
         tmp_dir = tempfile.gettempdir()
         tmp_file = os.path.join(tmp_dir, file) + ".wav"
 
-        file_name = re.sub("(\"|`)", r"\\\1", file_name)
-        tmp_file = re.sub("(\"|`)", r"_xyz_", tmp_file)
+        file_name = re.sub('("|`)', r"\\\1", file_name)
+        tmp_file = re.sub('("|`)', r"_xyz_", tmp_file)
 
-        full_command = full_command + " " + \
-            self.get_cmd_options(file_name, tmp_file)
+        full_command = full_command + " " + self.get_cmd_options(file_name, tmp_file)
 
-        r = subprocess.Popen(full_command, shell=True,
-                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        r = subprocess.Popen(
+            full_command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        )
         stdout_data, stderr_data = r.communicate()
 
         if os.path.exists(tmp_file):
@@ -90,16 +89,16 @@ class AudioFileReader:
         file_name = re.sub(r"(\"|`|\$)", r"\\\1", file_name)
         tmp_file = re.sub(r"(\"|`|\$)", r"_xyz_", tmp_file)
 
-        full_command = full_command + " " + \
-            self.get_cmd_options(file_name, tmp_file)
+        full_command = full_command + " " + self.get_cmd_options(file_name, tmp_file)
 
-        #print_msg( full_command )
+        # print_msg( full_command )
 
-        r = subprocess.Popen(full_command, shell=True,
-                            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        r = subprocess.Popen(
+            full_command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        )
         stdout_data, stderr_data = r.communicate()
 
-        #read_wav.read_wav( tmp_file )
+        # read_wav.read_wav( tmp_file )
 
         ret_f = self.read_wav(tmp_file, target)
 
@@ -110,7 +109,8 @@ class AudioFileReader:
 
         time_b = time.time()
         dr14_log_info(
-            "AudioFileReader.read_audio_file_new: Clock: %2.8f" % (time_b - time_a))
+            "AudioFileReader.read_audio_file_new: Clock: %2.8f" % (time_b - time_a)
+        )
 
         return ret_f
 
@@ -124,13 +124,13 @@ class AudioFileReader:
         convert_32_bit = numpy.float32(2**31 + 1.0)
 
         try:
-            wave_read = wave.open(file_name, 'r')
+            wave_read = wave.open(file_name, "r")
             target.channels = wave_read.getnchannels()
             target.Fs = wave_read.getframerate()
             target.sample_width = wave_read.getsampwidth()
 
             nframes = wave_read.getnframes()
-            #print_msg( file_name + "!!!!!!!!!!!!: " + str(target.channels) + " " + str(target.sample_width ) + " " + str( target.Fs ) + " " + str( nframes ) )
+            # print_msg( file_name + "!!!!!!!!!!!!: " + str(target.channels) + " " + str(target.sample_width ) + " " + str( target.Fs ) + " " + str( nframes ) )
 
             X = wave_read.readframes(wave_read.getnframes())
             sample_type = "int%d" % (target.sample_width * 8)
@@ -145,9 +145,10 @@ class AudioFileReader:
 
                 # Combine bytes with proper sign handling
                 target.Y.reshape(-1)[0::1] = (
-                    (data[:, 0].astype(numpy.int32) << 0) |
-                    (data[:, 1].astype(numpy.int32) << 8) |
-                    ((data[:, 2].astype(numpy.int32) << 16) & 0xFF0000) |
+                    (data[:, 0].astype(numpy.int32) << 0)
+                    | (data[:, 1].astype(numpy.int32) << 8)
+                    | ((data[:, 2].astype(numpy.int32) << 16) & 0xFF0000)
+                    |
                     # Sign extension
                     ((data[:, 2] & 0x80).astype(numpy.int32) << 24) >> 8
                 )
@@ -158,20 +159,21 @@ class AudioFileReader:
 
             else:
                 target.Y = numpy.frombuffer(X, dtype=sample_type).reshape(
-                    nframes, target.channels)
+                    nframes, target.channels
+                )
 
-                if sample_type == 'int16':
+                if sample_type == "int16":
                     target.Y = target.Y.astype(numpy.float32) / convert_16_bit
-                elif sample_type == 'int32':
+                elif sample_type == "int32":
                     target.Y = target.Y.astype(numpy.float32) / convert_32_bit
-                elif sample_type == 'int8':
+                elif sample_type == "int8":
                     target.Y = target.Y.astype(numpy.float32) / convert_8_bit
                 else:
                     raise ValueError(f"Unsupported sample type: {sample_type}")
 
             wave_read.close()
 
-            #print_msg( "target.Y: " + str(target.Y.dtype) )
+            # print_msg( "target.Y: " + str(target.Y.dtype) )
         except:
             self.__init__()
             print_msg("Unexpected error: %s" % str(sys.exc_info()))
@@ -179,25 +181,26 @@ class AudioFileReader:
             return False
 
         time_b = time.time()
-        dr14_log_info("AudioFileReader.read_wav: Clock: %2.8f" %
-                      (time_b - time_a))
+        dr14_log_info("AudioFileReader.read_wav: Clock: %2.8f" % (time_b - time_a))
 
         return True
 
     def get_generic_ffmpeg_options(self, file_name, tmp_file):
-        return " -i \"%s\" -af aresample=resampler=soxr:precision=28:osr=44100:output_sample_bits=16:osf=s16 -acodec pcm_s16le -y \"%s\" -loglevel quiet " % (file_name, tmp_file)
+        return (
+            ' -i "%s" -af aresample=resampler=soxr:precision=28:osr=44100:output_sample_bits=16:osf=s16 -acodec pcm_s16le -y "%s" -loglevel quiet '
+            % (file_name, tmp_file)
+        )
+
 
 class Mp3FileReader(AudioFileReader):
-
     def get_cmd(self):
         return "lame"
 
     def get_cmd_options(self, file_name, tmp_file):
-        return "--silent " + "--decode " + "\"" + file_name + "\"" + " \"%s\" " % tmp_file
+        return "--silent " + "--decode " + '"' + file_name + '"' + ' "%s" ' % tmp_file
 
 
 class FlacFileReader(AudioFileReader):
-
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
@@ -208,7 +211,6 @@ class FlacFileReader(AudioFileReader):
 
 
 class Mp4FileReader(AudioFileReader):
-
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
@@ -217,23 +219,22 @@ class Mp4FileReader(AudioFileReader):
 
 
 class OggFileReader(AudioFileReader):
-
     def get_cmd(self):
         return "oggdec"
 
     def get_cmd_options(self, file_name, tmp_file):
-        return "--quiet " + "\"" + file_name + "\"" + " --output \"%s\"  " % tmp_file
+        return "--quiet " + '"' + file_name + '"' + ' --output "%s"  ' % tmp_file
+
 
 class OpusFileReader(AudioFileReader):
-
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
     def get_cmd_options(self, file_name, tmp_file):
         return self.get_generic_ffmpeg_options(file_name, tmp_file)
 
-class ApeFileReader(AudioFileReader):
 
+class ApeFileReader(AudioFileReader):
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
@@ -242,7 +243,6 @@ class ApeFileReader(AudioFileReader):
 
 
 class Ac3FileReader(AudioFileReader):
-
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
@@ -251,7 +251,6 @@ class Ac3FileReader(AudioFileReader):
 
 
 class WmaFileReader(AudioFileReader):
-
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
@@ -260,7 +259,6 @@ class WmaFileReader(AudioFileReader):
 
 
 class WavFileReader(AudioFileReader):
-
     def read_audio_file_new(self, file_name, target):
         return self.read_wav(file_name, target)
 
@@ -270,8 +268,8 @@ class WavFileReader(AudioFileReader):
     def get_cmd_options(self, file_name, tmp_file):
         return ""
 
-class WavpackFileReader(AudioFileReader):
 
+class WavpackFileReader(AudioFileReader):
     def read_audio_file_new(self, file_name, target):
         return self.read_wavpack(file_name, target)
 
@@ -281,16 +279,16 @@ class WavpackFileReader(AudioFileReader):
     def get_cmd_options(self, file_name, tmp_file):
         return ""
 
-class DsfFileReader(AudioFileReader):
 
+class DsfFileReader(AudioFileReader):
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 
     def get_cmd_options(self, file_name, tmp_file):
         return self.get_generic_ffmpeg_options(file_name, tmp_file)
 
-class DffFileReader(AudioFileReader):
 
+class DffFileReader(AudioFileReader):
     def get_cmd(self):
         return self.get_ffmpeg_cmd()
 

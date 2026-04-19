@@ -35,11 +35,10 @@ from dr14tmeter.out_messages import print_msg
 
 
 class AudioAnalysis:
-
     def compute_track(self, file_name):
         self.at = AudioTrack()
 
-        (head,  file_n) = os.path.split(file_name)
+        (head, file_n) = os.path.split(file_name)
 
         if not self.at.open(file_name):
             return False
@@ -73,7 +72,6 @@ class AudioAnalysis:
 
 
 class AudioDynVivacity(AudioAnalysis):
-
     def virt_compute(self):
         (foo, fn) = os.path.split(self.getFileName())
 
@@ -86,7 +84,6 @@ class AudioDynVivacity(AudioAnalysis):
 
 
 class AudioDrHistogram(AudioAnalysis):
-
     def virt_compute(self):
 
         (foo, fn) = os.path.split(self.getFileName())
@@ -100,7 +97,6 @@ class AudioDrHistogram(AudioAnalysis):
 
 
 class AudioLevelHistogram(AudioAnalysis):
-
     def virt_compute(self):
 
         (foo, fn) = os.path.split(self.getFileName())
@@ -114,7 +110,6 @@ class AudioLevelHistogram(AudioAnalysis):
 
 
 class AudioSpectrogram(AudioAnalysis):
-
     def virt_compute(self):
 
         (foo, fn) = os.path.split(self.getFileName())
@@ -129,7 +124,6 @@ class AudioSpectrogram(AudioAnalysis):
 
 
 class AudioPlotTrack(AudioAnalysis):
-
     def virt_compute(self):
 
         (foo, fn) = os.path.split(self.getFileName())
@@ -142,7 +136,6 @@ class AudioPlotTrack(AudioAnalysis):
 
 
 class AudioPlotTrackDistribution(AudioAnalysis):
-
     def virt_compute(self):
 
         (foo, fn) = os.path.split(self.getFileName())
@@ -154,7 +147,6 @@ class AudioPlotTrackDistribution(AudioAnalysis):
 
 
 class AudioCompressor(AudioAnalysis):
-
     def setCompressionModality(self, compression_modality):
         self.compression_modality = compression_modality
 
@@ -165,11 +157,13 @@ class AudioCompressor(AudioAnalysis):
         comp.set_compression_modality(self.compression_modality)
 
         full_file = os.path.join(
-            tempfile.gettempdir(), "%s%s.wav" % (file_n, "-compressed-"))
+            tempfile.gettempdir(), "%s%s.wav" % (file_n, "-compressed-")
+        )
 
         at = self.getAudioTrack()
         cY = comp.dyn_compressor(at.Y, at.Fs)
 
         wav_write(full_file, at.Fs, cY)
         print_msg(
-            "The resulting compressed audiotrack has been written in: %s " % full_file)
+            "The resulting compressed audiotrack has been written in: %s " % full_file
+        )

@@ -60,10 +60,24 @@ def get_ffmpeg_cmd():
     global ffmpeg_cmd
 
     if ffmpeg_cmd == None:
-        ffmpeg_f = subprocess.call(
-            "type " + "ffmpeg", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
-        avconv_f = subprocess.call(
-            "type " + "avconv", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+        ffmpeg_f = (
+            subprocess.call(
+                "type " + "ffmpeg",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            == 0
+        )
+        avconv_f = (
+            subprocess.call(
+                "type " + "avconv",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            == 0
+        )
 
         if ffmpeg_f:
             ffmpeg_cmd = "ffmpeg"
@@ -72,32 +86,40 @@ def get_ffmpeg_cmd():
 
     return ffmpeg_cmd
 
+
 def test_matplotlib_modules(fun_name):
     try:
         import matplotlib
     except ImportError:
         print_msg(
-            "The %s function require the installation of MatPlotLib: http://matplotlib.sourceforge.net" % fun_name)
+            "The %s function require the installation of MatPlotLib: http://matplotlib.sourceforge.net"
+            % fun_name
+        )
         return False
 
     return True
+
 
 def test_mutagen(fun_name):
     try:
         import mutagen
     except ImportError:
         print_msg(
-            "The %s function require the installation of MatPlotLib: http://matplotlib.sourceforge.net" % fun_name)
+            "The %s function require the installation of MatPlotLib: http://matplotlib.sourceforge.net"
+            % fun_name
+        )
         return False
 
     return True
+
 
 def test_hist_modules():
     try:
         import matplotlib
     except ImportError:
         print_msg(
-            "The histogram function require the installation of MatPlotLib: http://matplotlib.sourceforge.net")
+            "The histogram function require the installation of MatPlotLib: http://matplotlib.sourceforge.net"
+        )
         return False
 
     return True
@@ -108,7 +130,8 @@ def test_compress_modules():
         import scipy
     except:
         print_msg(
-            "The compression function require the installation of SciPy: http://www.scipy.org/")
+            "The compression function require the installation of SciPy: http://www.scipy.org/"
+        )
         return False
 
     return True

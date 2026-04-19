@@ -45,7 +45,7 @@ def compute_lev_hist(Y, Fs, duration=None, bins=100, plot=True, title=None):
         else:
             hist_title = "Hystogram of levels"
 
-        pyplot.title(r'%s' % hist_title)
+        pyplot.title(r"%s" % hist_title)
 
         pyplot.show()
     else:

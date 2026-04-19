@@ -40,7 +40,6 @@ def string_formatter(el):
 
 
 class Table:
-
     def __init__(self):
         self.__float_format = "%.2f"
         self.__col_cnt = 5
@@ -70,20 +69,22 @@ class Table:
 
     def new_table(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def end_table(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def write_table(self):
         return self.__ini_txt + self._get_txt()
 
     def nl(self):
-        if sys.platform.startswith('win'):
-            return '\n\r'
+        if sys.platform.startswith("win"):
+            return "\n\r"
         else:
-            return '\n'
+            return "\n"
 
     def add_formatter(self, _type, formatter):
         self.__formatter[_type] = formatter
@@ -91,12 +92,12 @@ class Table:
     def format_element(self, el):
         return self.__formatter.get(type(el), default_formatter)(el)
 
-    def append_row(self, row_el, cell_type='d'):
+    def append_row(self, row_el, cell_type="d"):
 
-        if cell_type == 'd':
+        if cell_type == "d":
             n_cell = self.new_cell
             e_cell = self.end_cell
-        elif cell_type == 'h':
+        elif cell_type == "h":
             n_cell = self.new_hcell
             e_cell = self.end_hcell
 
@@ -128,7 +129,8 @@ class Table:
 
     def add_title(self, title):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def add_value(self, val):
         self._append_txt(self.format_element(val))
@@ -153,19 +155,23 @@ class Table:
 
     def new_row(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def end_row(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def new_cell(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def end_cell(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def new_hcell(self):
         return self.new_cell()
@@ -175,22 +181,29 @@ class Table:
 
     def new_bold(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def end_bold(self):
         NotImplementedError(
-            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            " %s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
 
-class TextTable (Table):
-
+class TextTable(Table):
     def append_separator_line(self):
         self.append_row(
-            ["----------------------------------------------------------------------------------------------"])
+            [
+                "----------------------------------------------------------------------------------------------"
+            ]
+        )
 
     def append_closing_line(self):
         self.append_row(
-            ["=============================================================================================="])
+            [
+                "=============================================================================================="
+            ]
+        )
 
     def append_empty_line(self):
         self.append_row([""])
@@ -223,8 +236,7 @@ class TextTable (Table):
         self._append_txt("")
 
 
-class BBcodeTable (Table):
-
+class BBcodeTable(Table):
     def append_separator_line(self):
         self.append_row(["------------"] * self.col_cnt)
 
@@ -232,40 +244,57 @@ class BBcodeTable (Table):
         self.append_row(["============"] * self.col_cnt)
 
     def add_title(self, title):
-        self._append_txt(self.nl() + "[tr]" + self.nl() + " [td  colspan=%d] " %
-                         self.col_cnt + title + " [/td] " + self.nl() + "[/tr]" + self.nl())
+        self._append_txt(
+            self.nl()
+            + "[tr]"
+            + self.nl()
+            + " [td  colspan=%d] " % self.col_cnt
+            + title
+            + " [/td] "
+            + self.nl()
+            + "[/tr]"
+            + self.nl()
+        )
 
     def new_table(self):
         self._set_txt("")
-        self._append_txt('[table]' + self.nl())
+        self._append_txt("[table]" + self.nl())
 
     def end_table(self):
-        self._append_txt(self.nl() + '[/table]' + self.nl())
+        self._append_txt(self.nl() + "[/table]" + self.nl())
 
     def new_row(self):
-        self._append_txt(self.nl() + '[tr]' + self.nl())
+        self._append_txt(self.nl() + "[tr]" + self.nl())
 
     def end_row(self):
-        self._append_txt(self.nl() + '[/tr]' + self.nl())
+        self._append_txt(self.nl() + "[/tr]" + self.nl())
 
     def new_cell(self):
-        self._append_txt(' [td]')
+        self._append_txt(" [td]")
 
     def end_cell(self):
-        self._append_txt('[/td]')
+        self._append_txt("[/td]")
 
     def new_bold(self):
-        self._append_txt('[b]')
+        self._append_txt("[b]")
 
     def end_bold(self):
-        self._append_txt('[/b]')
+        self._append_txt("[/b]")
 
 
-class HtmlTable (Table):
-
+class HtmlTable(Table):
     def add_title(self, title):
-        self._append_txt(self.nl() + "<tr>" + self.nl() + " <th colspan=\"%d\" > " %
-                         self.col_cnt + title + "</th>" + self.nl() + "</tr>" + self.nl())
+        self._append_txt(
+            self.nl()
+            + "<tr>"
+            + self.nl()
+            + ' <th colspan="%d" > ' % self.col_cnt
+            + title
+            + "</th>"
+            + self.nl()
+            + "</tr>"
+            + self.nl()
+        )
 
     def new_table(self):
         self._set_txt("")
@@ -299,29 +328,33 @@ class HtmlTable (Table):
         self._append_txt(self.nl() + "</tr>" + self.nl())
 
     def new_cell(self):
-        self._append_txt(' <td>')
+        self._append_txt(" <td>")
 
     def end_cell(self):
-        self._append_txt('</td>')
+        self._append_txt("</td>")
 
     def new_hcell(self):
-        self._append_txt(' <th>')
+        self._append_txt(" <th>")
 
     def end_hcell(self):
-        self._append_txt('</th>')
+        self._append_txt("</th>")
 
     def new_bold(self):
-        self._append_txt('<b>')
+        self._append_txt("<b>")
 
     def end_bold(self):
-        self._append_txt('</b>')
+        self._append_txt("</b>")
 
 
-class MediaWikiTable (Table):
-
+class MediaWikiTable(Table):
     def add_title(self, title):
-        self._append_txt("|-" + self.nl() + "!align=\"left\" colspan=\"%d\" | " %
-                         self.col_cnt + title + self.nl())
+        self._append_txt(
+            "|-"
+            + self.nl()
+            + '!align="left" colspan="%d" | ' % self.col_cnt
+            + title
+            + self.nl()
+        )
 
     def new_table(self):
         self._set_txt("")
@@ -337,20 +370,19 @@ class MediaWikiTable (Table):
         self._append_txt(self.nl())
 
     def new_cell(self):
-        self._append_txt('||')
+        self._append_txt("||")
 
     def end_cell(self):
         self._append_txt("")
 
     def new_bold(self):
-        self._append_txt("\'\'\'")
+        self._append_txt("'''")
 
     def end_bold(self):
-        self._append_txt("\'\'\'")
+        self._append_txt("'''")
 
 
 class row:
-
     def __init__(self):
         self.row = []
         self.cursor = 0
@@ -450,8 +482,7 @@ class row:
             return False
 
 
-class ExtendedTextTable (Table):
-
+class ExtendedTextTable(Table):
     def __init__(self):
         Table.__init__(self)
         self._cols_sz = [0] * Table.get_col_cnt(self)
@@ -498,8 +529,9 @@ class ExtendedTextTable (Table):
         elif r.is_closing_line:
             pass
         else:
-            raise Exception("%s : Row model: Not Allowed " %
-                            sys._getframe().f_code.co_name)
+            raise Exception(
+                "%s : Row model: Not Allowed " % sys._getframe().f_code.co_name
+            )
 
     def _write_title(self, r):
         txt = " "
@@ -543,8 +575,9 @@ class ExtendedTextTable (Table):
             elif r.is_closing_line:
                 self._write_closing_line(r)
             else:
-                raise Exception("%s : Row model: Not Allowed " %
-                                sys._getframe().f_code.co_name)
+                raise Exception(
+                    "%s : Row model: Not Allowed " % sys._getframe().f_code.co_name
+                )
 
         return self.get_init_txt() + self._get_txt()
 

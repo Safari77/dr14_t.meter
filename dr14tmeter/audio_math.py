@@ -53,6 +53,7 @@ def normalize(y, ml=1.0):
     m = numpy.max(numpy.abs(y))
     return ml * (y * (1.0 / m))
 
+
 # compute the sha1 fingerprint of the track
 # Do not modify this function !!
 
@@ -64,5 +65,5 @@ def sha1_track_v1(y, ext_code=0):
     else:
         shat = hashlib.sha1(y[::100, :] + ext_code).hexdigest()
 
-    #print( shat )
+    # print( shat )
     return shat

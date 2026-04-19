@@ -48,11 +48,11 @@ def plot_track(Y, Fs, Plot=True, time_range=None, utime=0):
     else:
         ch = 1
 
-    ttime = (s[0] * 1 / Fs)
+    ttime = s[0] * 1 / Fs
     if utime == 0:
         d = ttime / f_utime(ttime)
         utime = ttime / d
-        #print( utime )
+        # print( utime )
 
     Fs = int(Fs * utime)
 
@@ -63,23 +63,23 @@ def plot_track(Y, Fs, Plot=True, time_range=None, utime=0):
     Yc = np.zeros(sz, dtype=np.float32)
 
     for i in range(ch):
-
         ax = pyplot.subplot(210 + i + 1)
 
         Yc[:] = 0.0
-        Yc[0:s[0]] = Y[:, 1]
+        Yc[0 : s[0]] = Y[:, 1]
 
         (H, xedges, yedges) = np.histogram2d(tm, Yc, bins=(sec, 500))
 
         mh = np.max(H, 1)
-        H = (H.T * (1 / mh))
+        H = H.T * (1 / mh)
 
         ax.xaxis.set_major_formatter(MyTimeFormatter(utime))
         pyplot.xticks(rotation=25)
 
         extent = [xedges[0], xedges[-1], yedges[-1], yedges[0]]
-        pyplot.imshow(H, extent=extent, interpolation='nearest',
-                      aspect='auto', cmap="hot")
+        pyplot.imshow(
+            H, extent=extent, interpolation="nearest", aspect="auto", cmap="hot"
+        )
 
     pyplot.show()
 

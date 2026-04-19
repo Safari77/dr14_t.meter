@@ -16,7 +16,6 @@
 
 
 class StructDuration:
-
     def __init__(self):
         self.tm_min = 0
         self.tm_sec = 0

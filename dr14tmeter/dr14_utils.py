@@ -26,7 +26,13 @@ import sys
 from dr14tmeter import dr14_global
 from dr14tmeter import dr14_config as config
 from dr14tmeter import audio_analysis as aa
-from dr14tmeter.dynamic_range_meter import DynamicRangeMeter, TextTable, BBcodeTable, HtmlTable, MediaWikiTable
+from dr14tmeter.dynamic_range_meter import (
+    DynamicRangeMeter,
+    TextTable,
+    BBcodeTable,
+    HtmlTable,
+    MediaWikiTable,
+)
 from dr14tmeter.out_messages import print_msg
 
 
@@ -39,7 +45,7 @@ def scan_files_list(input_file, options, out_dir):
     a = time.time()
 
     if input_file is None:
-        input_file = '-'
+        input_file = "-"
 
     files_list = []
 
@@ -134,15 +140,16 @@ def write_results(dr, options, out_dir, cur_dir):
 
     if not (os.access(full_out_dir, os.W_OK)):
         full_out_dir = tempfile.gettempdir()
-        print_msg(
-            "--------------------------------------------------------------- ")
+        print_msg("--------------------------------------------------------------- ")
         print_msg("- ATTENTION !")
         print_msg(
-            "- You do not have the write permission for the directory: %s " % full_out_dir)
+            "- You do not have the write permission for the directory: %s "
+            % full_out_dir
+        )
         print_msg(
-            "- The result files will be written in the tmp dir: %s " % full_out_dir)
-        print_msg(
-            "--------------------------------------------------------------- ")
+            "- The result files will be written in the tmp dir: %s " % full_out_dir
+        )
+        print_msg("--------------------------------------------------------------- ")
 
     if options.print_std_out:
         dr.fwrite_dr("", TextTable(), table_format, True)
@@ -151,14 +158,14 @@ def write_results(dr, options, out_dir, cur_dir):
         return
 
     all_tables = False
-    if 'a' in options.out_tables:
+    if "a" in options.out_tables:
         all_tables = True
 
     tables_list = {
-        'b': ["dr14_bbcode.txt", BBcodeTable()],
-        't': ["dr14-DR"+str(dr.dr14)+".txt",TextTable()],
-        'h': ["dr14.html", HtmlTable()],
-        'w': ["dr14_mediawiki.txt", MediaWikiTable()]
+        "b": ["dr14_bbcode.txt", BBcodeTable()],
+        "t": ["dr14-DR" + str(dr.dr14) + ".txt", TextTable()],
+        "h": ["dr14.html", HtmlTable()],
+        "w": ["dr14_mediawiki.txt", MediaWikiTable()],
     }
 
     out_list = ""
@@ -167,8 +174,13 @@ def write_results(dr, options, out_dir, cur_dir):
 
     for code in tables_list.keys():
         if code in options.out_tables or all_tables:
-            dr.fwrite_dr(os.path.join(full_out_dir, tables_list[code][0]), tables_list[code][1], table_format,
-                         append=options.append, dr_database=options.dr_database)
+            dr.fwrite_dr(
+                os.path.join(full_out_dir, tables_list[code][0]),
+                tables_list[code][1],
+                table_format,
+                append=options.append,
+                dr_database=options.dr_database,
+            )
             out_list += " %s " % tables_list[code][0]
 
     print_msg("")

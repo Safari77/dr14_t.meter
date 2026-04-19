@@ -24,17 +24,18 @@ out_file = sys.stdout
 err_file = sys.stderr
 mode = "verbose"
 
-logger = logging.getLogger('dr14log')
+logger = logging.getLogger("dr14log")
 
 
 def init_log(lev=logging.DEBUG):
     global logger
 
-    logger = logging.getLogger('dr14log')
+    logger = logging.getLogger("dr14log")
     logger.setLevel(logging.DEBUG)
     stream_h = logging.StreamHandler()
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
     stream_h.setLevel(lev)
     stream_h.setFormatter(formatter)
@@ -50,6 +51,7 @@ def dr14_log_debug(message):
 def dr14_log_info(message):
     global logger
     logger.info(message)
+
 
 ########
 
@@ -100,4 +102,4 @@ def set_quiet_msg():
     if mode == "quiet":
         return
 
-    message_file = codecs.open(os.devnull, "w",  encoding="utf-8")
+    message_file = codecs.open(os.devnull, "w", encoding="utf-8")

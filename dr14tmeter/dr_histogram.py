@@ -25,7 +25,9 @@ except:
     pass
 
 
-def compute_hist(Y, Fs, duration=None, bins=100, block_duration=0.2, plot=True, title=None):
+def compute_hist(
+    Y, Fs, duration=None, bins=100, block_duration=0.2, plot=True, title=None
+):
     s = Y.shape
 
     if len(Y.shape) > 1:
@@ -43,11 +45,11 @@ def compute_hist(Y, Fs, duration=None, bins=100, block_duration=0.2, plot=True, 
     curr_sam = 0
     rms = numpy.zeros((seg_cnt, ch))
 
-    #peaks = numpy.zeros((seg_cnt,ch))
+    # peaks = numpy.zeros((seg_cnt,ch))
 
     for i in range(seg_cnt - 1):
-        #r = numpy.arange( curr_sam , curr_sam + saples_per_block )
-        rms[i, :] = u_rms(Y[curr_sam: curr_sam + saples_per_block, :])
+        # r = numpy.arange( curr_sam , curr_sam + saples_per_block )
+        rms[i, :] = u_rms(Y[curr_sam : curr_sam + saples_per_block, :])
         curr_sam = curr_sam + saples_per_block
 
     i = seg_cnt - 1
@@ -76,31 +78,47 @@ def compute_hist(Y, Fs, duration=None, bins=100, block_duration=0.2, plot=True, 
         std_x = numpy.array([rms_mean - rms_std, rms_mean + rms_std])
         std_y = numpy.array([numpy.max(hist) * 0.7, numpy.max(hist) * 0.7])
 
-        pyplot.plot(mean_x, mean_y, linewidth=2, color='g')
-        pyplot.plot(std_x, std_y, linewidth=2, ls='--', color='c')
-        #print( hist )
+        pyplot.plot(mean_x, mean_y, linewidth=2, color="g")
+        pyplot.plot(std_x, std_y, linewidth=2, ls="--", color="c")
+        # print( hist )
 
         pyplot.axis([-92, 0, 0, numpy.max(hist) * 1.05])
 
         text_rel_pos = 0.9
-        pyplot.text(-85, numpy.max(hist) * text_rel_pos,
-                    "mean:    %.3f dB" % rms_mean, fontsize=15,)
-        pyplot.text(-85, numpy.max(hist) * (text_rel_pos - 0.05),
-                    "std dev:  %.3f dB" % rms_std, fontsize=15,)
-        pyplot.text(-85, numpy.max(hist) * (text_rel_pos - 0.10),
-                    "peak:     %.3f dB" % abs_peak, fontsize=15,)
-        pyplot.text(-85, numpy.max(hist) * (text_rel_pos - 0.15),
-                    "max rms:  %.3f dB" % rms_max, fontsize=15,)
+        pyplot.text(
+            -85,
+            numpy.max(hist) * text_rel_pos,
+            "mean:    %.3f dB" % rms_mean,
+            fontsize=15,
+        )
+        pyplot.text(
+            -85,
+            numpy.max(hist) * (text_rel_pos - 0.05),
+            "std dev:  %.3f dB" % rms_std,
+            fontsize=15,
+        )
+        pyplot.text(
+            -85,
+            numpy.max(hist) * (text_rel_pos - 0.10),
+            "peak:     %.3f dB" % abs_peak,
+            fontsize=15,
+        )
+        pyplot.text(
+            -85,
+            numpy.max(hist) * (text_rel_pos - 0.15),
+            "max rms:  %.3f dB" % rms_max,
+            fontsize=15,
+        )
 
-        pyplot.xlabel('RMS dB')
-        pyplot.ylabel('Relative frequency')
+        pyplot.xlabel("RMS dB")
+        pyplot.ylabel("Relative frequency")
 
         if title != None:
             hist_title = title
         else:
             hist_title = "Hystogram of dynamic"
 
-        pyplot.title(r'%s' % hist_title)
+        pyplot.title(r"%s" % hist_title)
 
         pyplot.plot(mean_x, mean_y)
 

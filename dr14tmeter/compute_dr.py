@@ -22,7 +22,6 @@ import numpy
 
 
 class ComputeAudio:
-
     def __init__(self):
         self.duration = StructDuration()
         self.Dr_lr = numpy.zeros(2)
@@ -38,12 +37,10 @@ class ComputeAudio:
 
 
 class ComputeDR14(ComputeAudio):
-
     def compute(self, Y, Fs):
         return compute_dr14(Y, Fs, self.duration, self.Dr_lr)
 
 
 class ComputeDRV(ComputeAudio):
-
     def compute(self, Y, Fs):
         return compute_DRV(Y, Fs, self.duration, self.Dr_lr)

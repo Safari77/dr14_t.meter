@@ -61,13 +61,13 @@ def compute_DRV(Y, Fs, duration=None, Dr_lr=None):
 
     (n, bins) = numpy.histogram(Ydr, 100)
 
-    #print( peaks )
-    #print( rms )
+    # print( peaks )
+    # print( rms )
 
     max_freq = numpy.max(n)
 
     bs = bins.shape[0]
-    bins = bins[0:bs - 1] + numpy.diff(bins) / 2.0
+    bins = bins[0 : bs - 1] + numpy.diff(bins) / 2.0
 
     i = n > max_freq * threshold
 
@@ -84,8 +84,7 @@ def compute_DRV(Y, Fs, duration=None, Dr_lr=None):
 
     if duration != None:
         duration.tm_min = int(s[0] * (1.0 / Fs) / 60.0)
-        duration.tm_sec = int(
-            ((s[0] * (1.0 / Fs) / 60.0) - duration.tm_min) * 60.0)
+        duration.tm_sec = int(((s[0] * (1.0 / Fs) / 60.0) - duration.tm_min) * 60.0)
 
     if Dr_lr != None:
         Dr_lr = ch_dr14

@@ -27,12 +27,12 @@ else:
 
 def get_config_directory(create=True):
 
-    p = os.environ.get('XDG_CONFIG_HOME')
+    p = os.environ.get("XDG_CONFIG_HOME")
 
     if p is None or not os.path.isabs(p):
-        p = os.path.expanduser('~/.config')
+        p = os.path.expanduser("~/.config")
 
-    cfg_dir = os.path.join(p, 'dr14tmeter')
+    cfg_dir = os.path.join(p, "dr14tmeter")
 
     if not os.path.isdir(cfg_dir) and create:
         os.mkdir(cfg_dir)
@@ -53,25 +53,25 @@ def get_config_file(create=True):
 def write_default_cfg(cfg_file):
     config = ConfigParser.ConfigParser()
 
-    config.add_section('config_version')
-    config.set('config_version', 'number', '1')
+    config.add_section("config_version")
+    config.set("config_version", "number", "1")
 
-    config.add_section('database')
+    config.add_section("database")
 
-    config.set('database', 'enabled', 'False')
-    config.set('database', 'path', get_config_directory() + "/dr14.db")
-    config.set('database', 'collection_dir', '/')
+    config.set("database", "enabled", "False")
+    config.set("database", "path", get_config_directory() + "/dr14.db")
+    config.set("database", "collection_dir", "/")
 
-    with open(cfg_file, 'w') as configfile:
+    with open(cfg_file, "w") as configfile:
         config.write(configfile)
 
 
 def set_db_path(full_file_path):
-    set_config_field('database', 'path', full_file_path)
+    set_config_field("database", "path", full_file_path)
 
 
 def enable_db(flag=True):
-    set_config_field('database', 'enabled', str(flag))
+    set_config_field("database", "enabled", str(flag))
 
 
 def database_exists():
@@ -83,7 +83,7 @@ def database_exists():
 
 
 def set_collection_dir(path):
-    set_config_field('database', 'collection_dir', path)
+    set_config_field("database", "collection_dir", path)
 
 
 def set_config_field(section, field, value):
@@ -91,21 +91,21 @@ def set_config_field(section, field, value):
     config = ConfigParser.ConfigParser()
     config.read(cfg_file)
     config.set(section, field, value)
-    with open(cfg_file, 'w') as configfile:
+    with open(cfg_file, "w") as configfile:
         config.write(configfile)
 
 
 def get_db_path():
-    return get_config_filed('database', 'path')
+    return get_config_filed("database", "path")
 
 
 def db_is_enabled():
-    s = get_config_filed('database', 'enabled')
+    s = get_config_filed("database", "enabled")
     return s.lower() in ["yes", "true", "t", "1", "ok", "yup"]
 
 
 def get_collection_dir():
-    return get_config_filed('database', 'collection_dir')
+    return get_config_filed("database", "collection_dir")
 
 
 def get_config_filed(section, field):

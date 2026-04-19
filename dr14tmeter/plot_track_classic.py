@@ -33,8 +33,7 @@ def on_select(vmin, vmax):
     dr14_log_debug("on_select: %f , %f " % (vmin, vmax))
     if vmin == vmax:
         return
-    plot_track_classic(plot_str=on_select.plot_str,
-                       start_time=vmin, end_time=vmax)
+    plot_track_classic(plot_str=on_select.plot_str, start_time=vmin, end_time=vmax)
     on_select.plot_str.plot()
 
 
@@ -42,8 +41,9 @@ def wheel_moved(event):
     dr14_log_debug("mouse_pressed: step: %d " % event.step)
 
     (start_time, end_time) = wheel_moved.plot_str.move(event.step)
-    plot_track_classic(plot_str=wheel_moved.plot_str,
-                       start_time=start_time, end_time=end_time)
+    plot_track_classic(
+        plot_str=wheel_moved.plot_str, start_time=start_time, end_time=end_time
+    )
     wheel_moved.plot_str.plot()
 
 
@@ -55,17 +55,16 @@ def mouse_pressed(event):
         dr14_log_debug("mouse_pressed: button 3")
 
         (start_time, end_time) = mouse_pressed.plot_str.zoom_out()
-        plot_track_classic(plot_str=mouse_pressed.plot_str,
-                           start_time=start_time, end_time=end_time)
+        plot_track_classic(
+            plot_str=mouse_pressed.plot_str, start_time=start_time, end_time=end_time
+        )
         mouse_pressed.plot_str.plot()
 
-        dr14_log_debug("mouse_pressed: start - end:  %f %f " %
-                       (start_time, end_time))
+        dr14_log_debug("mouse_pressed: start - end:  %f %f " % (start_time, end_time))
 
 
 class PltTrackStruct:
-
-    def __init__(self, plot_mode='fill', Y=[], Fs=44100, sz=0, ch=0):
+    def __init__(self, plot_mode="fill", Y=[], Fs=44100, sz=0, ch=0):
         self.ch = ch
         self.tot_time = 0
 
@@ -133,7 +132,6 @@ class PltTrackStruct:
             new_flag = True
 
         for j in range(self.ch):
-
             if new_flag:
                 self.ax[j] = self.fig.add_subplot(210 + j + 1)
 
@@ -144,14 +142,18 @@ class PltTrackStruct:
                     l = self.lines[j].pop(0)
                     l.remove()
 
-            if self.plot_mode == 'fill':
-                self.lines[j] = self.ax[j].fill_between(self.tb[self.start_block:self.end_block],
-                                                        self.mp[
-                                                            self.start_block:self.end_block, j],
-                                                        self.mn[self.start_block:self.end_block, j])
+            if self.plot_mode == "fill":
+                self.lines[j] = self.ax[j].fill_between(
+                    self.tb[self.start_block : self.end_block],
+                    self.mp[self.start_block : self.end_block, j],
+                    self.mn[self.start_block : self.end_block, j],
+                )
             else:
                 self.lines[j] = self.ax[j].plot(
-                    self.t, self.Y[self.first_sample: self.first_sample + self.sz_section, j], 'b')
+                    self.t,
+                    self.Y[self.first_sample : self.first_sample + self.sz_section, j],
+                    "b",
+                )
 
             self.ax[j].axis([self.start_time, self.end_time, -1.0, 1.0])
 
@@ -162,33 +164,41 @@ class PltTrackStruct:
             else:
                 milli_sec = False
 
-            self.ax[j].xaxis.set_major_formatter(
-                MyTimeFormatter(milli_sec=milli_sec))
+            self.ax[j].xaxis.set_major_formatter(MyTimeFormatter(milli_sec=milli_sec))
 
             self.ax[j].grid(True)
 
             pyplot.title("Channel %d" % (j + 1))
-            pyplot.xlabel('Time [min:sec]')
-            pyplot.ylabel('Amplitude')
+            pyplot.xlabel("Time [min:sec]")
+            pyplot.ylabel("Amplitude")
 
             if new_flag:
                 onsel = on_select
                 onsel.plot_str = self
-                self.span.append(SpanSelector(
-                    self.ax[j], onsel, 'horizontal', button=1))
+                self.span.append(
+                    SpanSelector(self.ax[j], onsel, "horizontal", button=1)
+                )
 
                 m_p = mouse_pressed
                 m_p.plot_str = self
-                connect('button_press_event', m_p)
+                connect("button_press_event", m_p)
 
                 w_m = wheel_moved
                 w_m.plot_str = self
-                connect('scroll_event', w_m)
+                connect("scroll_event", w_m)
 
         self.fig.canvas.draw()
 
 
-def plot_track_classic(Y=None, Fs=None, plot_str=None, utime=0.02, time_lim=5, start_time=0.0, end_time=-1.0):
+def plot_track_classic(
+    Y=None,
+    Fs=None,
+    plot_str=None,
+    utime=0.02,
+    time_lim=5,
+    start_time=0.0,
+    end_time=-1.0,
+):
 
     if Y is None and Fs is None and plot_str is None:
         raise
@@ -258,9 +268,11 @@ def plot_track_classic(Y=None, Fs=None, plot_str=None, utime=0.02, time_lim=5, s
 
         for i in range(sz):
             plot_str.mp[i, :] = np.max(
-                Y[curr_sample:curr_sample + samples_block, :], 0)
+                Y[curr_sample : curr_sample + samples_block, :], 0
+            )
             plot_str.mn[i, :] = np.min(
-                Y[curr_sample:curr_sample + samples_block, :], 0)
+                Y[curr_sample : curr_sample + samples_block, :], 0
+            )
             curr_sample = curr_sample + samples_block
 
         plot_str.start_block = 0

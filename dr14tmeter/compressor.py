@@ -27,7 +27,6 @@ except:
 
 
 class DynCompressor:
-
     def __init__(self):
         self.maxDB = -3.0
         self.linear_limit = 0.3
@@ -61,7 +60,7 @@ class DynCompressor:
         x = numpy.linspace(-1, 1, 21)
         y = self.c_fun(x)
 
-        int_f = interp1d(x, y, kind='cubic')
+        int_f = interp1d(x, y, kind="cubic")
 
         cY = int_f(Y)
 
@@ -86,6 +85,6 @@ class DynCompressor:
         a = -self.maxDB / (z - 1.0)
         b = -a * z
 
-        y[r2] = (a * numpy.abs(x[r2]) + b)
+        y[r2] = a * numpy.abs(x[r2]) + b
 
-        return x * 10.0**(y / 20.0)
+        return x * 10.0 ** (y / 20.0)

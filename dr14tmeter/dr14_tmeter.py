@@ -35,9 +35,10 @@ import logging
 import numpy
 import multiprocessing
 
+
 def main():
-    if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-        multiprocessing.set_start_method('fork', force=True)
+    if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
+        multiprocessing.set_start_method("fork", force=True)
 
     options = parse_args()
 
@@ -48,9 +49,9 @@ def main():
     init_log(logging.DEBUG)
     logging.disable(logging.INFO)
 
-    numpy.seterr(all='ignore')
+    numpy.seterr(all="ignore")
 
-    #print( options )
+    # print( options )
 
     if options.enable_database:
         enable_database()
@@ -76,7 +77,6 @@ def main():
             return
 
     if options.query != None:
-
         if not database_exists():
             print_err("Error: The database does not exist")
             print_err("Error: type dr14_tmeter -q for more info.")
@@ -86,10 +86,17 @@ def main():
             query_helper()
             return
 
-        if options.query[0] not in ["help", "top", "top_alb",
-                                    "worst", "worst_alb", "top_art",
-                                    "hist", "evol", "codec"]:
-
+        if options.query[0] not in [
+            "help",
+            "top",
+            "top_alb",
+            "worst",
+            "worst_alb",
+            "top_art",
+            "hist",
+            "evol",
+            "codec",
+        ]:
             print_err("Error: -q invalid parameter .")
             print_err("Error: type dr14_tmeter -q for more info.")
             return
@@ -104,15 +111,16 @@ def main():
     if options.path_name != None:
         path_name = os.path.abspath(options.path_name)
     else:
-        path_name = os.path.abspath('.')
+        path_name = os.path.abspath(".")
 
-    if not(os.path.exists(path_name)):
-        print_msg("Error: The input directory \"%s\"  does not exist!" % path_name)
+    if not (os.path.exists(path_name)):
+        print_msg('Error: The input directory "%s"  does not exist!' % path_name)
         return
 
-    if options.out_dir and not(os.path.exists(options.out_dir)):
+    if options.out_dir and not (os.path.exists(options.out_dir)):
         print_msg(
-            "Error (-o): The target directory \"%s\"  does not exist! " % options.out_dir)
+            'Error (-o): The target directory "%s"  does not exist! ' % options.out_dir
+        )
         return
 
     if options.quiet:
@@ -131,7 +139,6 @@ def main():
         return 1
 
     if options.scan_file:
-
         dr = DynamicRangeMeter()
 
         dr.write_to_local_db(db_is_enabled())
@@ -140,10 +147,10 @@ def main():
 
         if r == 1:
             print_out("")
-            print_out(dr.res_list[0]['file_name'] + " :")
-            print_out("DR      = %d" % dr.res_list[0]['dr14'])
-            print_out("Peak dB = %.2f" % dr.res_list[0]['dB_peak'])
-            print_out("Rms dB  = %.2f" % dr.res_list[0]['dB_rms'])
+            print_out(dr.res_list[0]["file_name"] + " :")
+            print_out("DR      = %d" % dr.res_list[0]["dr14"])
+            print_out("Peak dB = %.2f" % dr.res_list[0]["dB_peak"])
+            print_out("Rms dB  = %.2f" % dr.res_list[0]["dB_rms"])
             return 1
         else:
             print_msg("Error: invalid audio file")
@@ -158,8 +165,7 @@ def main():
         out_dir = path_name
 
     if options.files_list:
-        (success, clock, r) = scan_files_list(
-            options.path_name, options, out_dir)
+        (success, clock, r) = scan_files_list(options.path_name, options, out_dir)
     else:
         (success, clock, r) = scan_dir_list(subdirlist, options, out_dir)
 
@@ -168,25 +174,29 @@ def main():
         print_msg("Elapsed time: %2.2f sec" % clock)
     else:
         print_msg("No audio files found\n")
-        print_msg(" Usage: %s [options] path_name \n\nfor more details type \n%s --help\n" %
-                  (get_exe_name(), get_exe_name()))
+        print_msg(
+            " Usage: %s [options] path_name \n\nfor more details type \n%s --help\n"
+            % (get_exe_name(), get_exe_name())
+        )
 
-    if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
+    if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
         subprocess.call("stty sane", shell=True)
 
     if not database_exists():
         print_msg(" ")
         print_msg(" News ... News ... News ... News ... News  !!! ")
         print_msg(
-            " With the version 2.0.0 there is the possibility to store all results in a database")
+            " With the version 2.0.0 there is the possibility to store all results in a database"
+        )
         print_msg(" If you want to enable this database execute the command:")
         print_msg("  > %s --enable_database " % get_exe_name())
         print_msg("")
         print_msg(
-            " for more details visit: http://dr14tmeter.sourceforge.net/index.php/DR_Database ")
+            " for more details visit: http://dr14tmeter.sourceforge.net/index.php/DR_Database "
+        )
 
     return r
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

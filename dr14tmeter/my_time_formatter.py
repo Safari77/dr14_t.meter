@@ -23,8 +23,8 @@ except:
 
 
 try:
-    class MyTimeFormatter(matplotlib.ticker.Formatter):
 
+    class MyTimeFormatter(matplotlib.ticker.Formatter):
         def __init__(self, utime=1.0, milli_sec=False):
             self.utime = utime
             self.milli_sec = milli_sec
@@ -39,7 +39,7 @@ try:
             else:
                 return "%02d:%02d" % (minu, sec)
 except:
-    class MyTimeFormatter:
 
+    class MyTimeFormatter:
         def __init__(self):
             raise

@@ -41,7 +41,6 @@ from dr14tmeter.out_messages import print_msg, print_out
 
 
 class SharedDrResObj:
-
     def __init__(self):
         self.track_nr = -1
         self.file_name = ""
@@ -55,10 +54,9 @@ class SharedDrResObj:
 
 
 class DynamicRangeMeter:
-
     def __init__(self):
         self.res_list = []
-        self.dir_name = ''
+        self.dir_name = ""
         self.dr14 = 0
         self.meta_data = RetirveMetadata()
         self.compute_dr = ComputeDR14()
@@ -96,7 +94,7 @@ class DynamicRangeMeter:
         for file_name in dir_list:
             full_file = os.path.join(dir_name, file_name)
 
-            #print_msg( full_file )
+            # print_msg( full_file )
             if at.open(full_file):
                 self.__compute_and_append(at, file_name)
 
@@ -111,18 +109,20 @@ class DynamicRangeMeter:
 
         duration = StructDuration()
 
-        #( dr14, dB_peak, dB_rms ) = self.compute_dr.compute( at.Y , at.Fs )
+        # ( dr14, dB_peak, dB_rms ) = self.compute_dr.compute( at.Y , at.Fs )
         (dr14, dB_peak, dB_rms) = compute_dr14(at.Y, at.Fs, duration)
         sha1 = sha1_track_v1(at.Y, at.get_file_ext_code())
 
         self.dr14 = self.dr14 + dr14
 
-        res = {'file_name': file_name,
-               'dr14': dr14,
-               'dB_peak': dB_peak,
-               'dB_rms': dB_rms,
-               'duration': duration.to_str(),
-               'sha1': sha1}
+        res = {
+            "file_name": file_name,
+            "dr14": dr14,
+            "dB_peak": dB_peak,
+            "dB_rms": dB_rms,
+            "duration": duration.to_str(),
+            "sha1": sha1,
+        }
 
         self.res_list.append(res)
 
@@ -132,10 +132,20 @@ class DynamicRangeMeter:
 
         wr = WriteDr()
 
-        if self.__write_to_local_db and os.path.realpath(self.dir_name).startswith(self.coll_dir):
+        if self.__write_to_local_db and os.path.realpath(self.dir_name).startswith(
+            self.coll_dir
+        ):
             wr.write_to_local_dr_database(self)
 
-    def fwrite_dr(self, file_name, tm, ext_table=False, std_out=False, append=False, dr_database=True):
+    def fwrite_dr(
+        self,
+        file_name,
+        tm,
+        ext_table=False,
+        std_out=False,
+        append=False,
+        dr_database=True,
+    ):
 
         if ext_table:
             wr = WriteDrExtended()
@@ -158,8 +168,7 @@ class DynamicRangeMeter:
         try:
             out_file = codecs.open(file_name, file_mode, "utf-8-sig")
         except:
-            print_msg("File opening error [%s] :" %
-                      file_name, sys.exc_info()[0])
+            print_msg("File opening error [%s] :" % file_name, sys.exc_info()[0])
             return False
 
         out_file.write(self.table_txt)
@@ -193,11 +202,12 @@ class DynamicRangeMeter:
 
         threads = [1 for i in range(thread_cnt)]
 
-        job_free = mp.Value('i', 0)
+        job_free = mp.Value("i", 0)
 
         for t in range(thread_cnt):
             threads[t] = mp.Process(
-                target=self.run_mp, args=(job_queue_sh, res_queue_sh))
+                target=self.run_mp, args=(job_queue_sh, res_queue_sh)
+            )
 
         for t in range(thread_cnt):
             threads[t].start()
@@ -208,7 +218,7 @@ class DynamicRangeMeter:
 
         self.res_list = []
 
-        #i = 0
+        # i = 0
 
         dur = StructDuration()
 
@@ -216,20 +226,24 @@ class DynamicRangeMeter:
             res = res_queue_sh.get()
             if res.fail:
                 continue
-            self.res_list.append({'file_name':   res.file_name,
-                                  'dr14':        res.dr14,
-                                  'dB_peak':     res.dB_peak,
-                                  'dB_rms':      res.dB_rms,
-                                  'duration':    dur.float_to_str(res.duration),
-                                  'sha1':        res.sha1})
+            self.res_list.append(
+                {
+                    "file_name": res.file_name,
+                    "dr14": res.dr14,
+                    "dB_peak": res.dB_peak,
+                    "dB_rms": res.dB_rms,
+                    "duration": dur.float_to_str(res.duration),
+                    "sha1": res.sha1,
+                }
+            )
 
-        self.res_list = sorted(self.res_list, key=lambda res: res['file_name'])
+        self.res_list = sorted(self.res_list, key=lambda res: res["file_name"])
 
         #    i = i + 1
 
         for d in self.res_list:
-            if d['dr14'] > dr14.min_dr():
-                self.dr14 = self.dr14 + d['dr14']
+            if d["dr14"] > dr14.min_dr():
+                self.dr14 = self.dr14 + d["dr14"]
                 succ = succ + 1
 
         self.meta_data.scan_dir(dir_name, files_list)
@@ -245,17 +259,17 @@ class DynamicRangeMeter:
         at = AudioTrack()
         duration = StructDuration()
 
-        #print_msg("start .... ")
+        # print_msg("start .... ")
 
         while True:
             try:
                 # wait up to 1 second for a job, then gracefully exit
-                job = job_queue_sh.get(timeout=1.0) 
+                job = job_queue_sh.get(timeout=1.0)
             except queue.Empty:
                 return
 
             full_file = os.path.join(job.dir_name, job.file_name)
-            #print ( full_file )
+            # print ( full_file )
 
             if at.open(full_file):
                 (dr14, dB_peak, dB_rms) = compute_dr14(at.Y, at.Fs, duration)

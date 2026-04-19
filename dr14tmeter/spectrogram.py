@@ -34,11 +34,11 @@ def spectrogram(Y, Fs):
     else:
         ch = 1
 
-    #Ym = numpy.sum( Y , 1 ) / float(ch)
+    # Ym = numpy.sum( Y , 1 ) / float(ch)
 
     for j in numpy.arange(ch):
         pyplot.subplot(210 + j + 1)
-        pylab.specgram(Y[:, j], NFFT=Fs, Fs=Fs, cmap='gnuplot2')
+        pylab.specgram(Y[:, j], NFFT=Fs, Fs=Fs, cmap="gnuplot2")
 
         mean_x = numpy.array([0, s[0] * (1 / Fs)])
         mean_x = numpy.array([mean, mean])
@@ -46,8 +46,8 @@ def spectrogram(Y, Fs):
         pyplot.axis([0, s[0] * (1 / Fs), 0, Fs / 2.0])
 
         pyplot.title("Channel %d" % j)
-        pyplot.xlabel('Time [sec]')
-        pyplot.ylabel('Freq. [Hz]')
+        pyplot.xlabel("Time [sec]")
+        pyplot.ylabel("Freq. [Hz]")
         pyplot.grid(True)
 
         pyplot.title("Channel: %d" % int(j + 1))

@@ -1,4 +1,3 @@
-
 # dr14_t.meter: compute the DR14 value of the given audiofiles
 # Copyright (C) 2011  Simone Riva
 #
@@ -37,22 +36,27 @@ def local_dr_database_configure():
     subprocess.call("clear", shell=True)
 
     print_out(
-        "---------------------------------------------------------------------------------------------- ")
+        "---------------------------------------------------------------------------------------------- "
+    )
     print_out("- DR14 T.meter --  ")
     print_out("- Local DR database - Configuration procedure ")
     print_out(
-        "---------------------------------------------------------------------------------------------- ")
+        "---------------------------------------------------------------------------------------------- "
+    )
 
     print_out("  ")
     print_out(
-        "  The database, if enabled, automatically stores all DR result in a local database ")
+        "  The database, if enabled, automatically stores all DR result in a local database "
+    )
     print_out("  - You must set up some parameters to use the database -")
     print_out("  ")
 
     flag = True
     while flag:
-        print_out("  1. Insert the database directory: Default [%s]:" % os.path.split(
-            get_db_path())[0])
+        print_out(
+            "  1. Insert the database directory: Default [%s]:"
+            % os.path.split(get_db_path())[0]
+        )
 
         if sys.version_info[0] == 2:
             db_path = raw_input("     > ")
@@ -73,22 +77,26 @@ def local_dr_database_configure():
             flag = False
         else:
             print_out(
-                "  - [ %s ] is not a directory, please insert an acceptable directory name" % db_path)
+                "  - [ %s ] is not a directory, please insert an acceptable directory name"
+                % db_path
+            )
 
     print_out("  ")
     print_out(
-        "---------------------------------------------------------------------------------------------- ")
+        "---------------------------------------------------------------------------------------------- "
+    )
     print_out("  ")
     print_out(
-        "     If you set a collection directory ONLY the tracks inside this base folder and sub-folders ")
+        "     If you set a collection directory ONLY the tracks inside this base folder and sub-folders "
+    )
     print_out("     will be added to the database.")
     print_out(
-        "     If you insert \'any\' all analyzed tracks will be added to the database ")
+        "     If you insert 'any' all analyzed tracks will be added to the database "
+    )
 
     flag = True
     while flag:
-        print_out(
-            "  2. Insert your collection directory: Dafault [%s] " % "any")
+        print_out("  2. Insert your collection directory: Dafault [%s] " % "any")
 
         if sys.version_info[0] == 2:
             coll_path = raw_input("     > ")
@@ -109,13 +117,16 @@ def local_dr_database_configure():
             flag = False
         else:
             print_out(
-                "  - [ %s ] is not a directory, please insert an existing directory name" % coll_path)
+                "  - [ %s ] is not a directory, please insert an existing directory name"
+                % coll_path
+            )
 
     print_out("  ")
     print_out(" type: %s -q " % get_exe_name())
     print_out(" For more details and querying the database ")
     print_out(
-        "---------------------------------------------------------------------------------------------- ")
+        "---------------------------------------------------------------------------------------------- "
+    )
 
     return (db_path, coll_path)
 
@@ -138,8 +149,7 @@ def fix_problematic_database():
             dest_file = dbp + ".d_save"
             os.rename(dbp, dest_file)
             print_out("  ")
-            print_out(
-                " The old database has been saved in the file: %s " % dest_file)
+            print_out(" The old database has been saved in the file: %s " % dest_file)
             print_out("  ")
 
         enable_database(prompt=False)
@@ -171,7 +181,6 @@ def enable_database(prompt=True):
             f = True
 
     if not database_exists():
-
         if prompt:
             (db_path, coll_dir) = local_dr_database_configure()
         else:
@@ -196,7 +205,9 @@ def enable_database(prompt=True):
     if f:
         enable_db(True)
         print_msg(
-            "The local DR database is ready and enabled! It is located in the file: %s  " % get_db_path())
+            "The local DR database is ready and enabled! It is located in the file: %s  "
+            % get_db_path()
+        )
     else:
         print_err("The building procedure of the database has failed ... retry ")
     return
@@ -219,8 +230,10 @@ def input_number(p=" > ", rng=(0, 2**31)):
             continue
 
         if rng is not None and not (nr >= rng[0] and nr <= rng[1]):
-            print_out(" !! Please insert a valid option number in the [%d .. %d]" % (
-                min(rng), max(rng)))
+            print_out(
+                " !! Please insert a valid option number in the [%d .. %d]"
+                % (min(rng), max(rng))
+            )
             continue
 
         flag = False
@@ -279,8 +292,7 @@ def query_helper():
     ext_opt = []
 
     if nr in [1, 2, 3, 5, 6]:
-        print_out(
-            " Do you want to set the query extended options? [N/y] (default: No)")
+        print_out(" Do you want to set the query extended options? [N/y] (default: No)")
         if sys.version_info[0] == 2:
             an = raw_input(" > ")
         else:
@@ -382,6 +394,7 @@ def database_exec_query(options, tm=ExtendedTextTable()):
 
     wr = WriteDr()
     table_code = wr.write_query_result(
-        q.exec_query(), tm, table_title, q.get_col_keys())
+        q.exec_query(), tm, table_title, q.get_col_keys()
+    )
 
     return table_code

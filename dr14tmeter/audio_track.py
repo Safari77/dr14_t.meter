@@ -20,7 +20,6 @@ from dr14tmeter.audio_decoder import AudioDecoder
 
 
 class AudioTrack:
-
     def __init__(self):
         self.Y = numpy.array([])
         self.Fs = 0

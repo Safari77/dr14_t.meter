@@ -19,12 +19,24 @@ from dr14tmeter.audio_file_reader import *
 
 
 class AudioDecoder:
-
     def __init__(self):
         # Attention!!! do not modify the order of this list!!!!
         # It is used for computing the sha1 of the track
-        self.formats = ['.flac', '.mp3', '.ogg', '.opus', '.mp4',
-                        '.m4a', '.wav', '.wv', '.ape', '.ac3', '.wma', '.dsf', '.dff']
+        self.formats = [
+            ".flac",
+            ".mp3",
+            ".ogg",
+            ".opus",
+            ".mp4",
+            ".m4a",
+            ".wav",
+            ".wv",
+            ".ape",
+            ".ac3",
+            ".wma",
+            ".dsf",
+            ".dff",
+        ]
 
         self._ext = -1
 
@@ -41,34 +53,34 @@ class AudioDecoder:
 
         af = AudioFileReader()
 
-        if ext == '.mp3':
+        if ext == ".mp3":
             af = Mp3FileReader()
-        elif ext == '.flac':
+        elif ext == ".flac":
             af = FlacFileReader()
-        elif ext == '.ogg':
+        elif ext == ".ogg":
             af = OggFileReader()
-        elif ext == '.opus':
+        elif ext == ".opus":
             af = OpusFileReader()
-        elif ext in ['.mp4', '.m4a']:
+        elif ext in [".mp4", ".m4a"]:
             af = Mp4FileReader()
-        elif ext == '.wav':
+        elif ext == ".wav":
             af = WavFileReader()
-        elif ext == '.wav':
+        elif ext == ".wav":
             af = WavPackFileReader()
-        elif ext == '.wv':
+        elif ext == ".wv":
             af = ApeFileReader()
-        elif ext == '.ac3':
+        elif ext == ".ac3":
             af = Ac3FileReader()
-        elif ext == '.wma':
+        elif ext == ".wma":
             af = WmaFileReader()
-        elif ext == '.dsf':
+        elif ext == ".dsf":
             af = DsfFileReader()
-        elif ext == '.dff':
+        elif ext == ".dff":
             af = DffFileReader()
         else:
             return False
 
-        #af = PipeFileReader()
+        # af = PipeFileReader()
 
         self._ext = self.formats.index(ext)
         ret_f = af.read_audio_file_new(file_name, target)

@@ -28,7 +28,6 @@ def my_dict_factory(cursor, row):
 
 
 class query:
-
     def __init__(self):
         self.keys = []
         self.__params = list([30])
@@ -52,18 +51,20 @@ class query:
 
     def get_query(self):
         NotImplementedError(
-            "%s : is virutal and must be overridden." % sys._getframe().f_code.co_name)
+            "%s : is virutal and must be overridden." % sys._getframe().f_code.co_name
+        )
 
     def exec_query(self):
         db = dr_database_singletone().get()
-        return db.query(self.get_query(), (self.limit,), dict_factory_arg=my_dict_factory)
+        return db.query(
+            self.get_query(), (self.limit,), dict_factory_arg=my_dict_factory
+        )
 
     def get_col_keys(self):
         return self.keys
 
 
 class query_top_dr(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["DR", "Title", "Artist", "Album"]
@@ -85,7 +86,6 @@ class query_top_dr(query):
 
 
 class query_top_albums_dr(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["DR", "Album_Title", "Artist"]
@@ -105,7 +105,6 @@ class query_top_albums_dr(query):
 
 
 class query_worst_albums_dr(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["DR", "Album_Title", "Artist"]
@@ -125,7 +124,6 @@ class query_worst_albums_dr(query):
 
 
 class query_worst_dr(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["DR", "Title", "Artist", "Album"]
@@ -147,7 +145,6 @@ class query_worst_dr(query):
 
 
 class query_top_artists(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["Mean_DR", "Artist", "Track_Count"]
@@ -163,7 +160,11 @@ class query_top_artists(query):
 
     def exec_query(self):
         db = dr_database_singletone().get()
-        return db.query(self.get_query(), (self.min_track, self.limit), dict_factory_arg=my_dict_factory)
+        return db.query(
+            self.get_query(),
+            (self.min_track, self.limit),
+            dict_factory_arg=my_dict_factory,
+        )
 
     def get_query(self):
         q = """
@@ -185,7 +186,6 @@ class query_top_artists(query):
 
 
 class query_dr_histogram(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["DR", "Freq"]
@@ -207,7 +207,6 @@ class query_dr_histogram(query):
 
 
 class query_date_dr_evolution(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["Date", "Mean"]
@@ -232,7 +231,6 @@ class query_date_dr_evolution(query):
 
 
 class query_dr_codec(query):
-
     def __init__(self):
         query.__init__(self)
         self.keys = ["Codec", "Mean_DR", "Codec_Freq"]

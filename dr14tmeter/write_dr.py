@@ -22,7 +22,6 @@ from dr14tmeter.database import dr_database_singletone
 
 
 class WriteDr:
-
     def __init__(self):
         self.__dr_database_compatible = True
 
@@ -44,46 +43,63 @@ class WriteDr:
         album_sha1 = drm.meta_data.get_album_sha1()
         album_artist = drm.meta_data.get_album_artist()
 
-        db.insert_album(album_sha1, album_title,
-                        int(drm.dr14),
-                        disk_nr=drm.meta_data.get_disk_nr(), artist=album_artist[0])
+        db.insert_album(
+            album_sha1,
+            album_title,
+            int(drm.dr14),
+            disk_nr=drm.meta_data.get_disk_nr(),
+            artist=album_artist[0],
+        )
 
         for i in range(len(drm.res_list)):
-
-            curr_file_name = drm.res_list[i]['file_name']
+            curr_file_name = drm.res_list[i]["file_name"]
 
             if drm.meta_data.track_unreadable_failure(curr_file_name):
                 continue
 
-            track_sha1 = drm.res_list[i]['sha1']
-            title = drm.meta_data.get_value(curr_file_name, 'title')
-            dr = drm.res_list[i]['dr14']
-            rms = drm.res_list[i]['dB_rms']
-            peak = drm.res_list[i]['dB_peak']
-            duration = drm.meta_data.get_value(curr_file_name, 'duration')
-            size = drm.meta_data.get_value(curr_file_name, 'size')
-            bit = drm.meta_data.get_value(curr_file_name, 'bit')
-            bitrate = drm.meta_data.get_value(curr_file_name, 'bitrate')
-            sampling_rate = drm.meta_data.get_value(
-                curr_file_name, 'sampling_rate')
-            codec = drm.meta_data.get_value(curr_file_name, 'codec')
-            artist = drm.meta_data.get_value(curr_file_name, 'artist')
-            genre = drm.meta_data.get_value(curr_file_name, 'genre')
-            date = drm.meta_data.get_value(curr_file_name, 'date')
-            track_nr = drm.meta_data.get_value(curr_file_name, 'track_nr')
+            track_sha1 = drm.res_list[i]["sha1"]
+            title = drm.meta_data.get_value(curr_file_name, "title")
+            dr = drm.res_list[i]["dr14"]
+            rms = drm.res_list[i]["dB_rms"]
+            peak = drm.res_list[i]["dB_peak"]
+            duration = drm.meta_data.get_value(curr_file_name, "duration")
+            size = drm.meta_data.get_value(curr_file_name, "size")
+            bit = drm.meta_data.get_value(curr_file_name, "bit")
+            bitrate = drm.meta_data.get_value(curr_file_name, "bitrate")
+            sampling_rate = drm.meta_data.get_value(curr_file_name, "sampling_rate")
+            codec = drm.meta_data.get_value(curr_file_name, "codec")
+            artist = drm.meta_data.get_value(curr_file_name, "artist")
+            genre = drm.meta_data.get_value(curr_file_name, "genre")
+            date = drm.meta_data.get_value(curr_file_name, "date")
+            track_nr = drm.meta_data.get_value(curr_file_name, "track_nr")
 
             if title == None:
                 title = curr_file_name
 
-            db.insert_track(track_sha1, title,
-                            dr, rms, peak, duration,
-                            codec,  bit, bitrate, sampling_rate,
-                            album_sha1, artist,
-                            genre, date, track_nr, size)
+            db.insert_track(
+                track_sha1,
+                title,
+                dr,
+                rms,
+                peak,
+                duration,
+                codec,
+                bit,
+                bitrate,
+                sampling_rate,
+                album_sha1,
+                artist,
+                genre,
+                date,
+                track_nr,
+                size,
+            )
 
         db.commit_insert_session()
 
-    def write_query_result(self, res_dl, tm, table_title, desired_keys=None, desired_keys_titles=None):
+    def write_query_result(
+        self, res_dl, tm, table_title, desired_keys=None, desired_keys_titles=None
+    ):
 
         if len(res_dl) == 0:
             return ""
@@ -106,7 +122,7 @@ class WriteDr:
         tm.new_tbody()
 
         tm.append_separator_line()
-        tm.append_row(keys, 'h')
+        tm.append_row(keys, "h")
         tm.append_separator_line()
 
         for row in res_dl:
@@ -134,18 +150,17 @@ class WriteDr:
         tm.new_tbody()
 
         tm.append_separator_line()
-        tm.append_row([" DR", "Peak", "RMS", "Duration", "File name"], 'h')
+        tm.append_row([" DR", "Peak", "RMS", "Duration", "File name"], "h")
         tm.append_separator_line()
 
         for i in range(len(drm.res_list)):
-
-            if drm.res_list[i]['dr14'] > dr14.min_dr():
+            if drm.res_list[i]["dr14"] > dr14.min_dr():
                 row = []
-                row.append(" DR%d" % drm.res_list[i]['dr14'])
-                row.append(" %.2f" % drm.res_list[i]['dB_peak'] + ' dB')
-                row.append(" %.2f" % drm.res_list[i]['dB_rms'] + ' dB')
-                row.append(" %s" % drm.res_list[i]['duration'])
-                row.append(" %s" % drm.res_list[i]['file_name'])
+                row.append(" DR%d" % drm.res_list[i]["dr14"])
+                row.append(" %.2f" % drm.res_list[i]["dB_peak"] + " dB")
+                row.append(" %.2f" % drm.res_list[i]["dB_rms"] + " dB")
+                row.append(" %s" % drm.res_list[i]["duration"])
+                row.append(" %s" % drm.res_list[i]["file_name"])
 
                 tm.append_row(row)
 
@@ -169,7 +184,6 @@ class WriteDr:
 
 
 class WriteDrExtended(WriteDr):
-
     def __init__(self):
         WriteDr.__init__(self)
 
@@ -189,7 +203,6 @@ class WriteDrExtended(WriteDr):
             self.set_loudness_war_db_compatible(False)
 
         if self.get_loudness_war_db_compatible():
-
             title = ""
 
             if album_t == None:
@@ -201,7 +214,6 @@ class WriteDrExtended(WriteDr):
             tm.add_title(title)
 
         else:
-
             if album_t == None:
                 tm.add_title(" Analyzed folder:  " + album_dir)
             else:
@@ -214,7 +226,7 @@ class WriteDrExtended(WriteDr):
         tm.new_tbody()
 
         tm.append_separator_line()
-        tm.append_row(["DR", "Peak", "RMS", "Duration", "Title [codec]"], 'h')
+        tm.append_row(["DR", "Peak", "RMS", "Duration", "Title [codec]"], "h")
         tm.append_separator_line()
 
         list_bit = []
@@ -227,37 +239,35 @@ class WriteDrExtended(WriteDr):
         d_nr = 0
 
         for i in range(len(drm.res_list)):
-
-            if drm.res_list[i]['dr14'] > dr14.min_dr():
+            if drm.res_list[i]["dr14"] > dr14.min_dr():
                 row = []
-                row.append(" DR%d" % drm.res_list[i]['dr14'])
-                row.append(" %.2f" % drm.res_list[i]['dB_peak'] + ' dB')
-                row.append(" %.2f" % drm.res_list[i]['dB_rms'] + ' dB')
-                row.append(drm.res_list[i]['duration'])
+                row.append(" DR%d" % drm.res_list[i]["dr14"])
+                row.append(" %.2f" % drm.res_list[i]["dB_peak"] + " dB")
+                row.append(" %.2f" % drm.res_list[i]["dB_rms"] + " dB")
+                row.append(drm.res_list[i]["duration"])
 
-                #print( "> " + drm.res_list[i]['file_name'] )
+                # print( "> " + drm.res_list[i]['file_name'] )
 
-                curr_file_name = drm.res_list[i]['file_name']
+                curr_file_name = drm.res_list[i]["file_name"]
 
-                tr_title = drm.meta_data.get_value(curr_file_name, 'title')
-                #print( "> " + tr_title )
+                tr_title = drm.meta_data.get_value(curr_file_name, "title")
+                # print( "> " + tr_title )
                 if tr_title == None:
-                    row.append(drm.res_list[i]['file_name'])
+                    row.append(drm.res_list[i]["file_name"])
                 else:
-                    nr = drm.meta_data.get_value(curr_file_name, 'track_nr')
-                    codec = drm.meta_data.get_value(curr_file_name, 'codec')
+                    nr = drm.meta_data.get_value(curr_file_name, "track_nr")
+                    codec = drm.meta_data.get_value(curr_file_name, "codec")
 
                     if nr == None:
                         nr = i + 1
 
                     row.append("%02d - %s \t [%s]" % (nr, tr_title, codec))
 
-                bitrate = drm.meta_data.get_value(curr_file_name, 'bitrate')
-                bit = drm.meta_data.get_value(curr_file_name, 'bit')
-                s_rate = drm.meta_data.get_value(
-                    curr_file_name, 'sampling_rate')
+                bitrate = drm.meta_data.get_value(curr_file_name, "bitrate")
+                bit = drm.meta_data.get_value(curr_file_name, "bit")
+                s_rate = drm.meta_data.get_value(curr_file_name, "sampling_rate")
 
-                kbs = drm.meta_data.get_value(curr_file_name, 'bitrate')
+                kbs = drm.meta_data.get_value(curr_file_name, "bitrate")
 
                 if kbs != None:
                     sum_kbs += int(kbs)
@@ -284,8 +294,7 @@ class WriteDrExtended(WriteDr):
         tm.add_title(" Sampling rate: \t\t %s Hz" % sampl_rate[0])
 
         if cnt > 0:
-            tm.add_title(" Average bitrate: \t\t %d kbs " %
-                         ((sum_kbs / 1000) / cnt))
+            tm.add_title(" Average bitrate: \t\t %d kbs " % ((sum_kbs / 1000) / cnt))
 
         mf_bit = max(set(list_bit), key=list_bit.count)
         tm.add_title(" Bits per sample: \t\t %s bit" % (mf_bit))

@@ -50,11 +50,11 @@ def dynamic_vivacity(Y, Fs, Plot=True):
 
     curr_sample = 0
     for i in range(seg_cnt - 1):
-        #r = numpy.arange( curr_sample , curr_sample + samples_per_block )
-        rms = u_rms(Y[curr_sample: curr_sample + samples_per_block, :])
-        mx = numpy.max(Y[curr_sample: curr_sample + samples_per_block, :], 0)
+        # r = numpy.arange( curr_sample , curr_sample + samples_per_block )
+        rms = u_rms(Y[curr_sample : curr_sample + samples_per_block, :])
+        mx = numpy.max(Y[curr_sample : curr_sample + samples_per_block, :], 0)
         seg_dyn[i, :] = decibel_u(mx, rms)
-        iz = (rms < audio_min())
+        iz = rms < audio_min()
         seg_dyn[i, iz] = 0.0
         curr_sample = curr_sample + samples_per_block
 
@@ -65,7 +65,7 @@ def dynamic_vivacity(Y, Fs, Plot=True):
         rms = u_rms(Y[r, :])
         mx = numpy.max(Y[r, :])
         seg_dyn[i, :] = decibel_u(mx, rms)
-        iz = (rms < audio_min())
+        iz = rms < audio_min()
         seg_dyn[i, iz] = 0.0
 
     t = numpy.arange(0.0, math.floor((1.0 / Fs) * s[0]) + 1, step=block_size)
@@ -89,7 +89,6 @@ def dynamic_vivacity(Y, Fs, Plot=True):
 
     if Plot:
         for j in range(ch):
-
             ax = pyplot.subplot(210 + j + 1)
             pyplot.plot(t.T, seg_dyn[:, j], linewidth=2, color="b")
             pyplot.grid(True)
@@ -105,20 +104,28 @@ def dynamic_vivacity(Y, Fs, Plot=True):
             std_a_y = numpy.array([mean[j], mean[j]] + std[j])
             std_b_y = numpy.array([mean[j], mean[j]] - std[j])
 
-            pyplot.plot(time_x, std_a_y, linewidth=2, ls='--', color='c')
-            pyplot.plot(time_x, std_b_y, linewidth=2, ls='--', color='c')
+            pyplot.plot(time_x, std_a_y, linewidth=2, ls="--", color="c")
+            pyplot.plot(time_x, std_b_y, linewidth=2, ls="--", color="c")
 
             pyplot.axis([0, tot_t, 0, max_db * 1.15])
 
             text_rel_pos = 0.2
-            pyplot.text(tot_t * 0.1, max_db * text_rel_pos,
-                        "mean:     %.3f dB" % mean[j], fontsize=12)
-            pyplot.text(tot_t * 0.1, max_db * (text_rel_pos - 0.07),
-                        "std dev:  %.3f dB" % std[j], fontsize=12)
+            pyplot.text(
+                tot_t * 0.1,
+                max_db * text_rel_pos,
+                "mean:     %.3f dB" % mean[j],
+                fontsize=12,
+            )
+            pyplot.text(
+                tot_t * 0.1,
+                max_db * (text_rel_pos - 0.07),
+                "std dev:  %.3f dB" % std[j],
+                fontsize=12,
+            )
 
             pyplot.title("Channel %d" % (j + 1))
-            pyplot.xlabel('Time [min:sec]')
-            pyplot.ylabel('Dynamic. [dB]')
+            pyplot.xlabel("Time [min:sec]")
+            pyplot.ylabel("Dynamic. [dB]")
 
         pyplot.show()
 
